@@ -51,8 +51,3 @@ def check_departures():
             print(f"The next train to arrive on {platform_number} ", end="") 
             print(f"goes to {final_destination}, ", end="") 
             print(f"departing in {minutes_till_departure} minutes")
-
-
-if __name__ == "__main__": 
-    print("Hello")
-    check_departures()
