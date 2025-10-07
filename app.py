@@ -52,10 +52,7 @@ def index():
     </div>
     """
 
-
-
-
-    return render_template_string(html, departures=departures, platform1=platform1, platform2=platform2)
+    return render_template_string(html, platform1=platform1, platform2=platform2)
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=80)
+    app.run(host="0.0.0.0", port=80, debug=True)

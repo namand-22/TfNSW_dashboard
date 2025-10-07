@@ -10,16 +10,15 @@ full_url = base_url + departure_url
 # utc is 11 hrs behind aest
 timezone_offset = 39600
 
-# empty retrun variable to be added to 
-upcoming_departures = []
-
-# current date and time
-current_datetime = datetime.datetime.now()
-current_date = current_datetime.strftime("%Y%m%d")
-current_time = int(current_datetime.strftime("%H%M"))
-
-
 def check_departures():
+    # empty retrun variable to be added to 
+    upcoming_departures = []
+    
+    # current date and time
+    current_datetime = datetime.datetime.now()
+    current_date = current_datetime.strftime("%Y%m%d")
+    current_time = int(current_datetime.strftime("%H%M"))
+    
     api_parameters = {
         "outputFormat": "rapidJSON",
         "coordOutputFormat": "EPSG:4326",
@@ -42,7 +41,7 @@ def check_departures():
     stop_events = data["stopEvents"]
 
     # checks for upcoming departures from Hills Showground
-    for stop_event in stop_events[:20]:
+    for stop_event in stop_events[:30]:
         platform_number = stop_event["location"]["properties"]["platformName"]
         
         # if upcoming departures are from the metro, not bus
@@ -62,3 +61,6 @@ def check_departures():
             upcoming_departures.append(departure_info)
     
     return upcoming_departures
+
+if __name__ == "__main__":
+    print(check_departures())
