@@ -41,7 +41,7 @@ def check_departures():
     stop_events = data["stopEvents"]
 
     # checks for upcoming departures from Hills Showground
-    for stop_event in stop_events[:30]:
+    for stop_event in stop_events[:15]:
         platform_number = stop_event["location"]["properties"]["platformName"]
         
         # if upcoming departures are from the metro, not bus
