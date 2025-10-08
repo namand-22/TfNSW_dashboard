@@ -1,21 +1,27 @@
-from flask import Flask, render_template_string
+from flask import Flask, render_template_string, jsonify
 from main import check_departures
 
 
 app = Flask(__name__)
 
+
 @app.route("/")
 def index():
-    departures = check_departures()
+    departures = check_departures(station_id=2154392) # station_id is for Hills Showground
 
     platform1 = []
     platform2 = []
 
+    p1_counter = 0
+    p2_counter = 0
+
     for departure in departures:
-        if departure["platform"] == "Platform 1":
+        if departure["platform"] == "Platform 1" and p1_counter < 3:
             platform1.append(departure)
-        else:
+            p1_counter += 1
+        elif departure["platform"] == "Platform 2" and p2_counter < 3:
             platform2.append(departure)
+            p2_counter += 1
 
 
     html = """
@@ -53,6 +59,13 @@ def index():
     """
 
     return render_template_string(html, platform1=platform1, platform2=platform2)
+
+# api for upcoming departures function
+@app.route("/api/departures")
+def departures():
+    departures = check_departures(station_id=2154392, num_departures=16) # station_id is for Hills Showground
+    return jsonify(departures)
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=80, debug=True)

@@ -7,10 +7,12 @@ base_url = "https://api.transport.nsw.gov.au/v1"
 departure_url = "/tp/departure_mon"
 full_url = base_url + departure_url
 
+    
+
 # utc is 11 hrs behind aest
 timezone_offset = 39600
 
-def check_departures():
+def check_departures(station_id):
     # empty retrun variable to be added to 
     upcoming_departures = []
     
@@ -19,12 +21,13 @@ def check_departures():
     current_date = current_datetime.strftime("%Y%m%d")
     current_time = int(current_datetime.strftime("%H%M"))
     
+
     api_parameters = {
         "outputFormat": "rapidJSON",
         "coordOutputFormat": "EPSG:4326",
         "mode": "direct",
         "type_dm": "stop",
-        "name_dm": "2154392",
+        "name_dm": str(station_id),
         "depArrMacro": "dep",
         "itdDate": current_date,
         "itdTime": current_time,
@@ -41,7 +44,7 @@ def check_departures():
     stop_events = data["stopEvents"]
 
     # checks for upcoming departures from Hills Showground
-    for stop_event in stop_events[:15]:
+    for stop_event in stop_events:
         platform_number = stop_event["location"]["properties"]["platformName"]
         
         # if upcoming departures are from the metro, not bus
@@ -62,4 +65,4 @@ def check_departures():
     return upcoming_departures
 
 if __name__ == "__main__":
-    print(check_departures())
+    check_departures(station_id=2154392) # station_id is for Hills Showground
