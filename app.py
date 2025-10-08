@@ -4,14 +4,15 @@ from departures import check_departures
 
 app = Flask(__name__)
 
-
+# formats the front end for the landing page
 @app.route("/")
 def index():
-    departures = check_departures(station_id=206710) # station_id is for Hills Showground
+    departures = check_departures(station_id=206710) # station_id is for Chatswood station
 
     platform1, platform2, platform3, platform4 = [], [], [], []
     p1_counter, p2_counter, p3_counter, p4_counter = 0, 0, 0, 0
 
+    # ensures only the next three departures of each platform are displayed
     for departure in departures:
         if departure["platform"] == "Platform 1" and p1_counter < 3:
             platform1.append(departure)
@@ -28,7 +29,6 @@ def index():
 
 
     html = """
-
     <style>
         body { font-family: Poppins, sans-serif; background-color: lightgray; padding: 75px; color: cornflowerblue; }
         h2 { color: cornflowerblue; }
@@ -39,87 +39,44 @@ def index():
         tr { background-color: white; }
     </style>
 
-    <h1>Upcoming Departures</h1>
+    <h1>
+        Chatswood Station departures
+    </h1>
 
-    <div class="platform">
-        <h2>Platform 1</h2>
-        <table>
-            <tr>
-                <th>Train line</th>
-                <th>Destination</th>
-                <th>Departs in</th>
-            </tr>
-            {% for departure in platform1 %}
-
+    {% for platform_num, platform_data in [(1, platform1), (2, platform2), (3, platform3), (4, platform4)] %}
+        <div class="platform">
+            <h2>
+                Platform {{platform_num}} 
+            </h2>
+            <table>
                 <tr>
-                    <td>{{ departure["train_line"] }}</td>
-                    <td>{{ departure["destination"] }}</td>
-                    <td>{{ departure["departing_in"] }} min</td>
+                    <th>
+                        Train line
+                    </th>
+                    <th>
+                        Destination
+                    </th>
+                    <th>
+                        Departs in
+                    </th>
                 </tr>
-
-            {% endfor %}
-        </table>
-    </div>
-
-    <div class="platform">
-        <h2>Platform 2</h2>
-        <table>
-            <tr>
-                <th>Train line</th>
-                <th>Destination</th>
-                <th>Departs in</th>
-            </tr>
-            {% for departure in platform2 %}
-
-                <tr>
-                    <td>{{ departure["train_line"] }}</td>
-                    <td>{{ departure["destination"] }}</td>
-                    <td>{{ departure["departing_in"] }} min</td>
-                </tr>
-
-            {% endfor %}
-        </table>
-    </div>
-
-    <div class="platform">
-        <h2>Platform 3</h2>
-        <table>
-            <tr>
-                <th>Train line</th>
-                <th>Destination</th>
-                <th>Departs in</th>
-            </tr>
-            {% for departure in platform3 %}
-
-                <tr>
-                    <td>{{ departure["train_line"] }}</td>
-                    <td>{{ departure["destination"] }}</td>
-                    <td>{{ departure["departing_in"] }} min</td>
-                </tr>
-
-            {% endfor %}
-        </table>
-    </div>
-
-    <div class="platform">
-        <h2>Platform 4</h2>
-        <table>
-            <tr>
-                <th>Train line</th>
-                <th>Destination</th>
-                <th>Departs in</th>
-            </tr>
-            {% for departure in platform4 %}
-
-                <tr>
-                    <td>{{ departure["train_line"] }}</td>
-                    <td>{{ departure["destination"] }}</td>
-                    <td>{{ departure["departing_in"] }} min</td>
-                </tr>
-
-            {% endfor %}
-        </table>
-    </div>
+                
+                {% for departure in platform_data %}
+                    <tr>
+                        <td>
+                            {{ departure["train_line"] }}
+                        </td>
+                        <td>
+                            {{ departure["destination"] }}
+                        </td>
+                        <td>
+                            {{ departure["departing_in"] }} min
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    {% endfor %}
     """
 
     return render_template_string(html, platform1=platform1, platform2=platform2, platform3=platform3, platform4=platform4)
