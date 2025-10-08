@@ -23,39 +23,17 @@ def index():
 
     html = """
     <style>
-        body {
-            font-family: sans-serif;
-            background: white;
-            color: black;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-        }
-        .line-row {
-            display: flex;
-            flex: 1;
-            border-bottom: 2px solid black;
-        }
-
-        .half {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            border-right: 2px solid black;
-            box-sizing: border-box;
-        }
-        .line-title { font-size: 2.5vh; margin-bottom: 0.5vh; text-transform: uppercase; }
-        .line-destination { font-size: 2vh; color: #333; margin-bottom: 0.5vh; }
-        .main-time { font-size: 8vh; font-weight: bold; margin: 0.5vh 0; }
-        .other-times, .platform { font-size: 2vh; color: gray; }
-        .platform { font-size: 1.5vh; margin-top: 0.5vh; }
-        .arrow { font-size: 4vh; margin-bottom: 0.5vh; }
-        .half:last-child { border: none; }
-        .line-row:last-child,
+        .half { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-right: 2px solid black }
+        body { font-family: sans-serif; margin: 0; display: flex; flex-direction: column }
+        .line-row { display: flex; flex: 1; border-bottom: 2px solid black }
+        .main-time { font-size: 8vh; font-weight: bold; margin: 0.5vh }
+        .line-destination { font-size: 2vh; margin-bottom: 0.5vh }
+        .line-title { font-size: 2.5vh; margin-bottom: 0.5vh }
+        .platform { font-size: 1.5vh; margin-top: 0.5vh }
+        .arrow { font-size: 4vh; margin-bottom: 0.5vh }
+        .line-row:last-child { border-bottom: none }
+        .half:last-child { border: none }
+        .other-times { font-size: 2vh }
     </style>
 
     {% for line, sides in lines.items() %}
