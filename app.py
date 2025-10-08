@@ -1,5 +1,5 @@
 from flask import Flask, render_template_string, jsonify
-from main import check_departures
+from departures import check_departures
 
 
 app = Flask(__name__)
@@ -7,13 +7,10 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-    departures = check_departures(station_id=2154392) # station_id is for Hills Showground
+    departures = check_departures(station_id=206710) # station_id is for Hills Showground
 
-    platform1 = []
-    platform2 = []
-
-    p1_counter = 0
-    p2_counter = 0
+    platform1, platform2, platform3, platform4 = [], [], [], []
+    p1_counter, p2_counter, p3_counter, p4_counter = 0, 0, 0, 0
 
     for departure in departures:
         if departure["platform"] == "Platform 1" and p1_counter < 3:
@@ -22,9 +19,16 @@ def index():
         elif departure["platform"] == "Platform 2" and p2_counter < 3:
             platform2.append(departure)
             p2_counter += 1
+        elif departure["platform"] == "Platform 3" and p3_counter < 3:
+            platform3.append(departure)
+            p3_counter += 1
+        elif departure["platform"] == "Platform 4" and p4_counter < 3:
+            platform4.append(departure)
+            p4_counter += 1
 
 
     html = """
+
     <style>
         body { font-family: Poppins, sans-serif; background-color: lightgray; padding: 75px; color: cornflowerblue; }
         h2 { color: cornflowerblue; }
@@ -40,9 +44,19 @@ def index():
     <div class="platform">
         <h2>Platform 1</h2>
         <table>
-            <tr><th>Destination</th><th>Departs in</th></tr>
+            <tr>
+                <th>Train line</th>
+                <th>Destination</th>
+                <th>Departs in</th>
+            </tr>
             {% for departure in platform1 %}
-                <tr><td>{{ departure["destination"] }}</td><td>{{ departure["departing_in"] }} min</td></tr>
+
+                <tr>
+                    <td>{{ departure["train_line"] }}</td>
+                    <td>{{ departure["destination"] }}</td>
+                    <td>{{ departure["departing_in"] }} min</td>
+                </tr>
+
             {% endfor %}
         </table>
     </div>
@@ -50,15 +64,65 @@ def index():
     <div class="platform">
         <h2>Platform 2</h2>
         <table>
-            <tr><th>Destination</th><th>Departs in</th></tr>
+            <tr>
+                <th>Train line</th>
+                <th>Destination</th>
+                <th>Departs in</th>
+            </tr>
             {% for departure in platform2 %}
-                <tr><td>{{ departure["destination"] }}</td><td>{{ departure["departing_in"] }} min</td></tr>
+
+                <tr>
+                    <td>{{ departure["train_line"] }}</td>
+                    <td>{{ departure["destination"] }}</td>
+                    <td>{{ departure["departing_in"] }} min</td>
+                </tr>
+
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="platform">
+        <h2>Platform 3</h2>
+        <table>
+            <tr>
+                <th>Train line</th>
+                <th>Destination</th>
+                <th>Departs in</th>
+            </tr>
+            {% for departure in platform3 %}
+
+                <tr>
+                    <td>{{ departure["train_line"] }}</td>
+                    <td>{{ departure["destination"] }}</td>
+                    <td>{{ departure["departing_in"] }} min</td>
+                </tr>
+
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="platform">
+        <h2>Platform 4</h2>
+        <table>
+            <tr>
+                <th>Train line</th>
+                <th>Destination</th>
+                <th>Departs in</th>
+            </tr>
+            {% for departure in platform4 %}
+
+                <tr>
+                    <td>{{ departure["train_line"] }}</td>
+                    <td>{{ departure["destination"] }}</td>
+                    <td>{{ departure["departing_in"] }} min</td>
+                </tr>
+
             {% endfor %}
         </table>
     </div>
     """
 
-    return render_template_string(html, platform1=platform1, platform2=platform2)
+    return render_template_string(html, platform1=platform1, platform2=platform2, platform3=platform3, platform4=platform4)
 
 # api for upcoming departures function
 @app.route("/api/departures")
