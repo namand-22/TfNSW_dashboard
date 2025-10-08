@@ -63,7 +63,7 @@ def index():
 # api for upcoming departures function
 @app.route("/api/departures")
 def departures():
-    departures = check_departures(station_id=2154392, num_departures=16) # station_id is for Hills Showground
+    departures = check_departures(station_id=2154392) # station_id is for Hills Showground
     return jsonify(departures)
 
 
