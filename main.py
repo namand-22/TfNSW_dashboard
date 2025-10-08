@@ -48,8 +48,6 @@ def check_departures():
         if platform_number == "Platform 1" or platform_number == "Platform 2":
             final_destination = stop_event["transportation"]["destination"]["name"]
             departure_time = stop_event["departureTimePlanned"]
-            
-
 
             datetime_format_departure_time = datetime.datetime.strptime(departure_time, "%Y-%m-%dT%H:%M:%SZ")    
 
@@ -57,8 +55,9 @@ def check_departures():
             seconds_till_departure = (datetime_format_departure_time.timestamp() - current_datetime.timestamp() + timezone_offset)
             minutes_till_departure = round(seconds_till_departure / 60)
             
-            departure_info = {"platform": platform_number, "destination": final_destination, "departing_in": minutes_till_departure}
-            upcoming_departures.append(departure_info)
+            if minutes_till_departure >= 0:
+                departure_info = {"platform": platform_number, "destination": final_destination, "departing_in": minutes_till_departure}
+                upcoming_departures.append(departure_info)
     
     return upcoming_departures
 
