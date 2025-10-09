@@ -1,6 +1,6 @@
 from flask import Flask, render_template_string, jsonify
 from departures import check_departures
-
+from collections import defaultdict
 
 app = Flask(__name__)
 
@@ -9,24 +9,17 @@ app = Flask(__name__)
 def index():
     departures = check_departures(station_id=206710) # station_id is for Chatswood station
 
-    platform1, platform2, platform3, platform4 = [], [], [], []
-    p1_counter, p2_counter, p3_counter, p4_counter = 0, 0, 0, 0
+    # Group departures by line and side
+    platform_side = { "1": "right", "2": "right", "3": "left", "4": "left" }
+    lines = defaultdict(lambda: {"left": [], "right": []})
+    for dep in departures:
+        platform_number = dep["platform"].split()[-1]
+        side = platform_side.get(platform_number, "right")
+        lines[dep["train_line"]][side].append(dep)
 
-    # ensures only the next three departures of each platform are displayed
-    for departure in departures:
-        if departure["platform"] == "Platform 1" and p1_counter < 3:
-            platform1.append(departure)
-            p1_counter += 1
-        elif departure["platform"] == "Platform 2" and p2_counter < 3:
-            platform2.append(departure)
-            p2_counter += 1
-        elif departure["platform"] == "Platform 3" and p3_counter < 3:
-            platform3.append(departure)
-            p3_counter += 1
-        elif departure["platform"] == "Platform 4" and p4_counter < 3:
-            platform4.append(departure)
-            p4_counter += 1
-
+    # keep next 4 departures per side per line
+    for line, sides in lines.items():
+        sides["left"], sides["right"] = sides["left"][:4], sides["right"][:4]
 
     html = """
     <head>
@@ -34,56 +27,43 @@ def index():
     </head>
         
     <style>
-        body { font-family: Poppins, sans-serif; background-color: lightgray; padding: 75px; color: cornflowerblue; }
-        h2 { color: cornflowerblue; }
-        .platform { background: lightgray; border-radius: 30px; padding: 50px, 50px, 50px, 50px; margin-bottom: 20px; box-shadow: 15px; }
-        table { border-collapse: collapse; width: 100%; margin-top: 10px; border: none; }
-        th, td { border: 1px solid black; padding: 8px; text-align: center; color: black; }
-        th { background-color: cornflowerblue; color: white; }
-        tr { background-color: white; }
+        .half { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-right: 2px solid }
+        body { font-family: sans-serif; margin: 0; display: flex; flex-direction: column }
+        .line-row { display: flex; flex: 1; border-bottom: 2px solid black }
+        .main-time { font-size: 8vh; font-weight: bold; margin: 0.5vh }
+        .line-destination { font-size: 2vh; margin-bottom: 0.5vh }
+        .line-title { font-size: 2.5vh; margin-bottom: 0.5vh }
+        .platform { font-size: 1.5vh; margin-top: 0.5vh }
+        .arrow { font-size: 4vh; margin-bottom: 0.5vh }
+        .line-row:last-child { border-bottom: none }
+        .half:last-child { border: none }
+        .other-times { font-size: 2vh }
     </style>
 
-    <h1>
-        Chatswood Station departures
-    </h1>
-
-    {% for platform_num, platform_data in [(1, platform1), (2, platform2), (3, platform3), (4, platform4)] %}
-        <div class="platform">
-            <h2>
-                Platform {{platform_num}} 
-            </h2>
-            <table>
-                <tr>
-                    <th>
-                        Train line
-                    </th>
-                    <th>
-                        Destination
-                    </th>
-                    <th>
-                        Departs in
-                    </th>
-                </tr>
-                
-                {% for departure in platform_data %}
-                    <tr>
-                        <td>
-                            {{ departure["train_line"] }}
-                        </td>
-                        <td>
-                            {{ departure["destination"] }}
-                        </td>
-                        <td>
-                            {{ departure["departing_in"] }} min
-                        </td>
-                    </tr>
-                {% endfor %}
-            </table>
+    {% for line, sides in lines.items() %}
+        <div class="line-row">
+            {% for side in ["left", "right"] %}
+                {% set departures = sides[side] %}
+                <div class="half">
+                    {% if departures %}
+                        <div class="arrow">{{ "←" if side == "left" else "→" }}</div>
+                        <div class="line-title">{{ line }}</div>
+                        <div class="line-destination">{{ departures[0].destination }}</div>
+                        <div class="main-time">{{ departures[0].departing_in }} min</div>
+                        <div class="other-times">
+                            {% for dep in departures[1:] %}
+                                {{ dep.departing_in }} min{{ ", " if not loop.last else "" }}
+                            {% endfor %}
+                        </div>
+                        <div class="platform">{{ departures[0].platform }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
         </div>
     {% endfor %}
     """
 
-    return render_template_string(html, platform1=platform1, platform2=platform2, platform3=platform3, platform4=platform4)
+    return render_template_string(html, lines=lines)
 
 # api for upcoming departures function
 @app.route("/api/departures")
