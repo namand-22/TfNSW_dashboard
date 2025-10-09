@@ -22,6 +22,9 @@ def index():
         sides["left"], sides["right"] = sides["left"][:4], sides["right"][:4]
 
     html = """
+    <head> 
+        <meta http-equiv="refresh" content="60"> 
+    </head> 
     <style>
         .half { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-right: 2px solid }
         body { font-family: sans-serif; margin: 0; display: flex; flex-direction: column }
