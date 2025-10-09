@@ -17,13 +17,13 @@ def index():
         side = platform_side.get(platform_number, "right")
         lines[dep["train_line"]][side].append(dep)
 
-    # keep next 3 departures per side per line
+    # keep next 4 departures per side per line
     for line, sides in lines.items():
-        sides["left"], sides["right"] = sides["left"][:3], sides["right"][:3]
+        sides["left"], sides["right"] = sides["left"][:4], sides["right"][:4]
 
     html = """
     <style>
-        .half { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-right: 2px solid black }
+        .half { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-right: 2px solid }
         body { font-family: sans-serif; margin: 0; display: flex; flex-direction: column }
         .line-row { display: flex; flex: 1; border-bottom: 2px solid black }
         .main-time { font-size: 8vh; font-weight: bold; margin: 0.5vh }
