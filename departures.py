@@ -66,4 +66,4 @@ def check_departures(station_id):
     return upcoming_departures
 
 if __name__ == "__main__":
-    check_departures(station_id=206710) # station_id is for Hills Showground
+    check_departures(station_id=206710) # station_id is for Chatswood

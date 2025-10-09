@@ -29,6 +29,10 @@ def index():
 
 
     html = """
+    <head>
+        <meta http-equiv="Refresh" content="60" />
+    </head>
+        
     <style>
         body { font-family: Poppins, sans-serif; background-color: lightgray; padding: 75px; color: cornflowerblue; }
         h2 { color: cornflowerblue; }
