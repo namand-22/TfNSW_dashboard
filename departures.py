@@ -1,12 +1,14 @@
 import requests
 import datetime
 
+# accessing the API
 api_key = "wHYh-AIObxYyTV0PCY3R0huV0nOXG1pCmAAWm8GZxXk"
 base_url = "https://api.transport.nsw.gov.au/v1"
 departure_url = "/tp/departure_mon"
 full_url = base_url + departure_url
 
-timezone_offset = 39600  # UTC to AEST
+# utc is 11 hrs behind aest
+timezone_offset = 39600
 
 def check_departures(station_id):
     upcoming_departures = []
@@ -50,7 +52,11 @@ def check_departures(station_id):
 
             try:
                 datetime_format_departure_time = datetime.datetime.strptime(departure_time, "%Y-%m-%dT%H:%M:%SZ")
-                seconds_till_departure = (datetime_format_departure_time.timestamp() - current_datetime.timestamp() + timezone_offset)
+                seconds_till_departure = (
+                    datetime_format_departure_time.timestamp()
+                    - current_datetime.timestamp()
+                    + timezone_offset
+                )
                 minutes_till_departure = round(seconds_till_departure / 60)
 
                 if minutes_till_departure >= 0:
@@ -67,4 +73,4 @@ def check_departures(station_id):
     return upcoming_departures
 
 if __name__ == "__main__":
-    print(check_departures(station_id=206710))
+    print(check_departures(station_id=206710))  # Chatswood
